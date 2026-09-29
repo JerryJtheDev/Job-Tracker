@@ -1,7 +1,7 @@
 import React from 'react';
 import { ApplicationStatus } from '../types';
 import { AnalyticsMetrics } from '../utils/analytics';
-import { Plus, Search, Activity, Terminal, Database, X } from 'lucide-react';
+import { Plus, Search, Activity, Terminal, Database, Trash2, X } from 'lucide-react';
 
 interface CommandLineHeaderProps {
   currentFocusStatus: ApplicationStatus;
@@ -13,6 +13,7 @@ interface CommandLineHeaderProps {
   onToggleDeck: () => void;
   onOpenBackup: () => void;
   onResetDemoData: () => void;
+  onOpenClearConfirm: () => void;
 }
 
 export const CommandLineHeader: React.FC<CommandLineHeaderProps> = ({
@@ -24,6 +25,7 @@ export const CommandLineHeader: React.FC<CommandLineHeaderProps> = ({
   isDeckOpen,
   onToggleDeck,
   onOpenBackup,
+  onOpenClearConfirm,
 }) => {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-3 px-3 sm:px-5 py-2.5 bg-[#080b11]/90 border-b border-zinc-800/80 backdrop-blur-md text-xs select-none">
@@ -81,14 +83,26 @@ export const CommandLineHeader: React.FC<CommandLineHeaderProps> = ({
 
       {/* Right: Quick actions */}
       <div className="flex items-center gap-2 shrink-0">
-        {/* Mobile-only utilities */}
+        {/* Clear All / Start Fresh Button (Prominent & Clear) */}
+        <button
+          type="button"
+          onClick={onOpenClearConfirm}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-rose-300 bg-zinc-900/60 hover:bg-rose-950/40 rounded border border-zinc-800 hover:border-rose-900/60 transition-colors"
+          title="Clear all data to track your personal job search"
+        >
+          <Trash2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-rose-400" />
+          <span className="hidden sm:inline">Start Fresh</span>
+        </button>
+
+        {/* Backup Utility */}
         <button
           type="button"
           onClick={onOpenBackup}
-          className="md:hidden p-1.5 text-zinc-400 hover:text-zinc-200 rounded hover:bg-zinc-900"
-          title="Backup JSON"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 rounded border border-zinc-800 transition-colors"
+          title="Backup & Export JSON"
         >
-          <Database className="w-3.5 h-3.5" />
+          <Database className="w-3.5 h-3.5 text-zinc-500" />
+          <span className="hidden md:inline">Backup</span>
         </button>
 
         {/* Toggle Command Deck */}

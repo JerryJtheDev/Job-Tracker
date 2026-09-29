@@ -9,6 +9,7 @@ import {
   Activity,
   Database,
   RotateCcw,
+  Trash2,
 } from 'lucide-react';
 
 interface ActivityStripProps {
@@ -19,6 +20,7 @@ interface ActivityStripProps {
   onToggleDeck: () => void;
   onOpenBackup: () => void;
   onResetDemoData: () => void;
+  onOpenClearConfirm: () => void;
   onShowShortcuts?: () => void;
   counts: Record<ApplicationStatus, number>;
 }
@@ -31,6 +33,7 @@ export const ActivityStrip: React.FC<ActivityStripProps> = ({
   onToggleDeck,
   onOpenBackup,
   onResetDemoData,
+  onOpenClearConfirm,
   counts,
 }) => {
   return (
@@ -167,6 +170,20 @@ export const ActivityStrip: React.FC<ActivityStripProps> = ({
 
       {/* Bottom Utilities */}
       <div className="flex flex-col items-center gap-1.5 w-full px-2">
+        {/* Clear All / Start Fresh */}
+        <button
+          type="button"
+          onClick={onOpenClearConfirm}
+          className="group relative flex items-center justify-center w-10 h-10 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-950/20 transition-colors"
+          title="Clear All Data / Start Fresh"
+        >
+          <Trash2 className="w-4 h-4" />
+          <span className="absolute left-14 px-2 py-1 rounded bg-zinc-900 text-xs font-mono text-rose-300 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-zinc-800 shadow-md">
+            Start Fresh (Clear All)
+          </span>
+        </button>
+
+        {/* Backup / Export */}
         <button
           type="button"
           onClick={onOpenBackup}
@@ -179,15 +196,16 @@ export const ActivityStrip: React.FC<ActivityStripProps> = ({
           </span>
         </button>
 
+        {/* Reload Demo */}
         <button
           type="button"
           onClick={onResetDemoData}
           className="group relative flex items-center justify-center w-10 h-10 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-zinc-900 transition-colors"
-          title="Reset sample data"
+          title="Reset to Junior Demo Pipeline"
         >
           <RotateCcw className="w-4 h-4" />
           <span className="absolute left-14 px-2 py-1 rounded bg-zinc-900 text-xs font-mono text-zinc-200 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-zinc-800 shadow-md">
-            Reset Demo Data
+            Reload Junior Demo
           </span>
         </button>
       </div>

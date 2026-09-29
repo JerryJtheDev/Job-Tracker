@@ -39,7 +39,8 @@ Eliminates rounded-rectangle cards with colored left stripes, initial avatars, a
   - High-priority "Today's Focus" action items.
 - **Icon-Only Activity Strip & Command Bar**: Slim vertical strip on the far-left edge paired with a single-line terminal command header (`pipeline / interviewing`) and inline search.
 - **Deep Application Detail & Activity Log**: Timestamped interview log entries, recruiter contacts, target compensation, and inline-editable prep notes.
-- **Offline Persistence & Portability**: Automatically persists to `localStorage` with pre-seeded sample developer roles (Linear, Stripe, GitHub, Cloudflare, Supabase, Datadog), plus one-click JSON backup export and import.
+- **Offline Persistence & Portability**: Automatically persists to `localStorage`. Pre-loaded with realistic junior/entry-level remote developer search data (Flutterwave, Paystack, DevFlow Labs, Helio Software, Moniepoint, Automattic, Supasite Studio, Chipper Cash, GitKraken), plus one-click JSON backup export and import.
+- **One-Click "Start Fresh / Clear All Data"**: Prominently placed in the command bar and data management dialog to instantly wipe all demo records (behind an intentional confirmation modal with optional JSON export) for seamless transition into personal daily tracking.
 
 ---
 

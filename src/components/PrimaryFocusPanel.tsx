@@ -3,7 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { JobApplication, StatusColumnConfig, ApplicationStatus } from '../types';
 import { STATUS_COLUMNS } from '../data/columns';
 import { ApplicationCard } from './ApplicationCard';
-import { Plus, Inbox, Search, X, ArrowUpDown } from 'lucide-react';
+import { Plus, Inbox, Search, X, ArrowUpDown, RotateCcw } from 'lucide-react';
 
 interface PrimaryFocusPanelProps {
   focusStatus: ApplicationStatus;
@@ -13,6 +13,7 @@ interface PrimaryFocusPanelProps {
   onCardClick: (application: JobApplication) => void;
   onQuickMove: (id: string, newStatus: ApplicationStatus) => void;
   onAddNewApplication: (defaultStatus?: ApplicationStatus) => void;
+  onResetDemoData?: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   sortBy: 'date-desc' | 'date-asc' | 'company-asc';
@@ -27,6 +28,7 @@ export const PrimaryFocusPanel: React.FC<PrimaryFocusPanelProps> = ({
   onCardClick,
   onQuickMove,
   onAddNewApplication,
+  onResetDemoData,
   searchQuery,
   onSearchChange,
   sortBy,
@@ -53,6 +55,8 @@ export const PrimaryFocusPanel: React.FC<PrimaryFocusPanelProps> = ({
         return '';
     }
   };
+
+  const isTotalBoardEmpty = allApplications.length === 0;
 
   return (
     <div
@@ -186,21 +190,39 @@ export const PrimaryFocusPanel: React.FC<PrimaryFocusPanelProps> = ({
           <div className="h-64 flex flex-col items-center justify-center p-6 text-center border border-dashed border-zinc-800/80 rounded-xl bg-zinc-900/20">
             <Inbox className="w-8 h-8 text-zinc-600 mb-2 stroke-[1.5]" />
             <p className="text-sm text-zinc-200 font-bold mb-1">
-              No applications in {currentColumn.title}
+              {isTotalBoardEmpty
+                ? 'Your personal board is ready'
+                : `No applications in ${currentColumn.title}`}
             </p>
-            <p className="text-xs text-zinc-500 leading-relaxed max-w-sm mb-4">
-              {searchQuery
+            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm mb-4">
+              {isTotalBoardEmpty
+                ? 'You are running with a clean slate. Start logging the remote roles you are applying to, or reload the sample junior demo anytime.'
+                : searchQuery
                 ? `No matching applications for "${searchQuery}". Clear your search or add a new role.`
                 : `Drag applications from the secondary queues on the right into this panel, or log a new role.`}
             </p>
-            <button
-              type="button"
-              onClick={() => onAddNewApplication(focusStatus)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-md transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Log role in {currentColumn.title}</span>
-            </button>
+
+            <div className="flex items-center gap-2 flex-wrap justify-center">
+              <button
+                type="button"
+                onClick={() => onAddNewApplication(focusStatus)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-zinc-950 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Log {isTotalBoardEmpty ? 'first role' : `role in ${currentColumn.title}`}</span>
+              </button>
+
+              {isTotalBoardEmpty && onResetDemoData && (
+                <button
+                  type="button"
+                  onClick={onResetDemoData}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-md transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Reload sample roles</span>
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

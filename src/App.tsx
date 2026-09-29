@@ -13,16 +13,17 @@ import { AsymmetricBoard } from './components/AsymmetricBoard';
 import { ApplicationDetailModal } from './components/ApplicationDetailModal';
 import { ApplicationFormModal } from './components/ApplicationFormModal';
 import { ExportImportModal } from './components/ExportImportModal';
+import { ConfirmClearModal } from './components/ConfirmClearModal';
 
-const STORAGE_KEY = 'pipeline_job_tracker_applications_v2';
+const STORAGE_KEY = 'pipeline_job_tracker_applications_v3';
 
 export default function App() {
   const [applications, setApplications] = useState<JobApplication[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
@@ -37,6 +38,7 @@ export default function App() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
   const [isDeckOpen, setIsDeckOpen] = useState(true);
   const [editingApplication, setEditingApplication] = useState<JobApplication | null>(null);
   const [formDefaultStatus, setFormDefaultStatus] = useState<ApplicationStatus>('applied');
@@ -67,7 +69,13 @@ export default function App() {
         return;
       }
 
-      if ((e.key === 'n' || e.key === 'N') && !isFormOpen && !isDetailOpen && !isBackupOpen) {
+      if (
+        (e.key === 'n' || e.key === 'N') &&
+        !isFormOpen &&
+        !isDetailOpen &&
+        !isBackupOpen &&
+        !isClearConfirmOpen
+      ) {
         e.preventDefault();
         handleOpenNewApplication(focusStatus);
       } else if (e.key === '/') {
@@ -86,12 +94,13 @@ export default function App() {
         setIsDetailOpen(false);
         setIsFormOpen(false);
         setIsBackupOpen(false);
+        setIsClearConfirmOpen(false);
         setSearchQuery('');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFormOpen, isDetailOpen, isBackupOpen, focusStatus]);
+  }, [isFormOpen, isDetailOpen, isBackupOpen, isClearConfirmOpen, focusStatus]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -177,6 +186,27 @@ export default function App() {
     showToast(`Removed ${target?.company || 'role'}`);
   };
 
+  // Clear All Data / Start Fresh
+  const handleConfirmClearAll = () => {
+    setApplications([]);
+    setSelectedApplication(null);
+    setIsDetailOpen(false);
+    showToast('All applications cleared. Ready for your personal job search!');
+  };
+
+  // Download Backup JSON helper
+  const handleDownloadBackup = () => {
+    const jsonString = JSON.stringify(applications, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pipeline-job-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Backup downloaded');
+  };
+
   // Update application from detail modal
   const handleUpdateApplication = (updated: JobApplication) => {
     setApplications((prev) =>
@@ -204,9 +234,12 @@ export default function App() {
   };
 
   const handleResetDemoData = () => {
-    if (window.confirm('Reset tracker to developer sample pipeline? Any manual entries will be overwritten.')) {
+    if (
+      applications.length === 0 ||
+      window.confirm('Reset tracker to junior remote developer sample pipeline? Any current entries will be replaced.')
+    ) {
       setApplications(INITIAL_APPLICATIONS);
-      showToast('Sample data restored');
+      showToast('Junior remote demo pipeline loaded');
     }
   };
 
@@ -226,6 +259,7 @@ export default function App() {
         onToggleDeck={() => setIsDeckOpen(!isDeckOpen)}
         onOpenBackup={() => setIsBackupOpen(true)}
         onResetDemoData={handleResetDemoData}
+        onOpenClearConfirm={() => setIsClearConfirmOpen(true)}
         counts={stageCounts}
       />
 
@@ -242,6 +276,7 @@ export default function App() {
           onToggleDeck={() => setIsDeckOpen(!isDeckOpen)}
           onOpenBackup={() => setIsBackupOpen(true)}
           onResetDemoData={handleResetDemoData}
+          onOpenClearConfirm={() => setIsClearConfirmOpen(true)}
         />
 
         {/* Asymmetric Core Workspace */}
@@ -252,6 +287,7 @@ export default function App() {
             onStatusChange={handleStatusChange}
             onSelectApplication={handleSelectApplication}
             onAddNewApplication={handleOpenNewApplication}
+            onResetDemoData={handleResetDemoData}
             focusStatus={focusStatus}
             onSetFocusStatus={setFocusStatus}
             isDeckOpen={isDeckOpen}
@@ -286,6 +322,17 @@ export default function App() {
         onClose={() => setIsBackupOpen(false)}
         applications={applications}
         onImport={handleImportApplications}
+        onOpenClearConfirm={() => setIsClearConfirmOpen(true)}
+        onResetSampleData={handleResetDemoData}
+      />
+
+      {/* Confirmation Modal to Clear All Data & Start Fresh */}
+      <ConfirmClearModal
+        isOpen={isClearConfirmOpen}
+        onClose={() => setIsClearConfirmOpen(false)}
+        onConfirmClear={handleConfirmClearAll}
+        applications={applications}
+        onDownloadBackup={handleDownloadBackup}
       />
 
       {/* Discreet Toast Notification */}

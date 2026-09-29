@@ -25,6 +25,7 @@ interface AsymmetricBoardProps {
   onStatusChange: (id: string, newStatus: ApplicationStatus) => void;
   onSelectApplication: (application: JobApplication) => void;
   onAddNewApplication: (defaultStatus?: ApplicationStatus) => void;
+  onResetDemoData?: () => void;
   focusStatus: ApplicationStatus;
   onSetFocusStatus: (status: ApplicationStatus) => void;
   isDeckOpen: boolean;
@@ -38,6 +39,7 @@ export const AsymmetricBoard: React.FC<AsymmetricBoardProps> = ({
   onStatusChange,
   onSelectApplication,
   onAddNewApplication,
+  onResetDemoData,
   focusStatus,
   onSetFocusStatus,
   isDeckOpen,
@@ -148,6 +150,7 @@ export const AsymmetricBoard: React.FC<AsymmetricBoardProps> = ({
             onCardClick={onSelectApplication}
             onQuickMove={onStatusChange}
             onAddNewApplication={onAddNewApplication}
+            onResetDemoData={onResetDemoData}
             searchQuery={searchQuery}
             onSearchChange={onSearchChange}
             sortBy={sortBy}
