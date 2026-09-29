@@ -1,0 +1,6 @@
+{
+  "name": "Pipeline - Developer Job Tracker",
+  "description": "Command-center job application tracker and analytics board for software developers actively applying to remote roles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
